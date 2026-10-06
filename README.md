@@ -2,7 +2,7 @@
 
 A responsive course catalog and player built for the [IT Legend frontend challenge](https://challenges.itlegend.net/frontend-hiring). The player follows the supplied desktop/mobile design: a compact course header, a 3:2 video stage, course materials, progress, curriculum, comments, and focused dialogs.
 
-[Live demo](https://itlegend-course-player-abdallah.new-rice-6165.chatgpt.site) · [Public repository](https://github.com/Abdallahkhale/itlegend-course-platform)
+[Live demo](https://itlegend-course-player-abdallah.abdallahkha211.chatgpt.site) · [Public repository](https://github.com/Abdallahkhale/itlegend-course-platform)
 
 ## Run locally
 

@@ -53,4 +53,6 @@ Questions, comments, quiz attempts, resume, and completions are device-local moc
 
 ## Publication
 
-The public GitHub repository includes the complete implementation and logical commits. The registered public Site is being published from the verified export; successful native deployment verification will be recorded here after completion.
+The [public GitHub repository](https://github.com/Abdallahkhale/itlegend-course-platform) includes the complete implementation and logical commits. Native Site deployment reported **succeeded** on 6 October 2026, and the audience is confirmed **public**. The literal URL from the successful deployment is [the live demo](https://itlegend-course-player-abdallah.abdallahkha211.chatgpt.site). The source repository was pushed and its static archive saved before deployment.
+
+The portable hosting helpers needed Windows compatibility settings: native npm produced the build, Git Bash was selected ahead of the WSL launcher, and GNU tar used `TAR_OPTIONS=--force-local` for the Windows archive path. This affects packaging only; the published application remains an ordinary Next.js static export.

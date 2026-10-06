@@ -123,8 +123,8 @@ Search, filters, accounts, enrollment, and remote APIs are not required. Priorit
 - [x] Record asset attribution and actual validation evidence.
 - [x] Create logical commits throughout implementation.
 - [x] Create the public GitHub repository and push complete source.
-- [ ] Publish a production demo without login and verify its successful deployment. The registered Site audience is public; deployment is in progress.
-- [ ] Add repository/demo links to README and provide the user both links. Repository and registered demo-origin links are prepared; the successful live URL will be confirmed after deployment.
+- [x] Publish a production demo without login and verify its successful deployment. Native deployment reported succeeded on 6 October 2026; audience is public.
+- [x] Add verified repository/demo links to README and deliver both links. See README and docs/SUBMISSION.md.
 - [x] Prepare a submission checklist. User identity fields and final competition submission remain for the user.
 
 Suggested commits: requirements/setup; typed content/assets; catalog/responsive player; media/navigation/progress; dialogs/materials/exams/comments; visual/accessibility fixes; documentation/deployment.
