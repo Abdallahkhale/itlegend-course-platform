@@ -4,6 +4,14 @@ import AxeBuilder from "@axe-core/playwright";
 test("catalog, playback, completion, retained popups, comment and synchronized progress", async ({ page, request }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
+  page.on("response", (response) => { if (response.url().startsWith("http://127.0.0.1:3000/") && response.status() >= 400) errors.push(`${response.status()} ${response.url()}`); });
+  const compressed = await request.get("/courses/", { headers: { "Accept-Encoding": "gzip" } });
+  expect(compressed.headers()["content-encoding"]).toBe("gzip");
+  expect(await compressed.text()).toContain("Explore Our Courses");
+  const videoRange = await request.get("/videos/lesson-demo.mp4", { headers: { Range: "bytes=0-31", "Accept-Encoding": "br, gzip" } });
+  expect(videoRange.status()).toBe(206);
+  expect((await videoRange.body()).length).toBe(32);
+  expect(videoRange.headers()["content-encoding"]).toBeUndefined();
   await page.goto("/courses");
   await expect(page.locator(".course-card")).toHaveCount(6);
   await expect(page.getByText("Not started", { exact: true }).first()).toBeVisible();
@@ -41,7 +49,7 @@ test("catalog, playback, completion, retained popups, comment and synchronized p
   expect(questionAudit.violations).toEqual([]);
   await page.keyboard.press("Escape");
 
-  await page.getByRole("button", { name: /^Course Overview, exam/ }).click();
+  await page.getByRole("button", { name: /^Course Overview.*exam/ }).click();
   await expect(page.getByRole("dialog", { name: "Course Exam", exact: true })).toBeVisible();
   await expect.poll(() => video.evaluate((element) => (element as HTMLVideoElement).paused)).toBe(true);
   await page.getByLabel("Understanding the searcher’s intent", { exact: true }).check();
@@ -50,12 +58,12 @@ test("catalog, playback, completion, retained popups, comment and synchronized p
   const examAudit = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
   expect(examAudit.violations).toEqual([]);
   await page.keyboard.press("Escape");
-  await page.getByRole("button", { name: /^Course Overview, exam/ }).click();
+  await page.getByRole("button", { name: /^Course Overview.*exam/ }).click();
   await expect(page.getByText("Question 2 of 3", { exact: true })).toBeVisible();
   await expect(page.getByLabel("A beginner’s guide to SEO", { exact: true })).toBeChecked();
   await page.keyboard.press("Escape");
   await page.reload();
-  await page.getByRole("button", { name: /^Course Overview, exam/ }).click();
+  await page.getByRole("button", { name: /^Course Overview.*exam/ }).click();
   await expect(page.getByText("Question 2 of 3", { exact: true })).toBeVisible();
   await expect(page.getByLabel("A beginner’s guide to SEO", { exact: true })).toBeChecked();
   await page.getByRole("button", { name: "Question 3", exact: true }).click();
@@ -65,7 +73,7 @@ test("catalog, playback, completion, retained popups, comment and synchronized p
   await expect(page.getByText("3 of 3", { exact: true })).toBeVisible();
   await page.keyboard.press("Escape");
 
-  await page.getByRole("button", { name: /^Course Exercise \/ Reference Files, PDF material/ }).click();
+  await page.getByRole("button", { name: /^Course Exercise \/ Reference Files.*PDF material/ }).click();
   await expect(page.getByRole("dialog", { name: "Course Material", exact: true })).toBeVisible();
   await expect(page.locator(".pdf-frame")).toHaveAttribute("src", /seo-workbook\.pdf/);
   const pdf = await request.get("/materials/seo-workbook.pdf");
@@ -150,7 +158,7 @@ test("media failures stay recoverable", async ({ page }) => {
 test("PDF material has a readable fallback when native PDF viewing is unavailable", async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(navigator, "pdfViewerEnabled", { value: false, configurable: true }));
   await page.goto("/courses/starting-seo");
-  await page.getByRole("button", { name: /^Course Exercise \/ Reference Files, PDF material/ }).click();
+  await page.getByRole("button", { name: /^Course Exercise \/ Reference Files.*PDF material/ }).click();
   await expect(page.locator(".pdf-page-preview img")).toBeVisible();
   await expect(page.getByRole("link", { name: "Open PDF in a new tab", exact: true })).toHaveAttribute("href", "/materials/seo-workbook.pdf");
   await page.keyboard.press("Escape");
