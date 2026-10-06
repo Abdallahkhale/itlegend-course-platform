@@ -1,0 +1,158 @@
+import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+
+test("catalog, playback, completion, retained popups, comment and synchronized progress", async ({ page, request }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/courses");
+  await expect(page.locator(".course-card")).toHaveCount(6);
+  await expect(page.getByText("Not started", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText("Completed", { exact: true })).toBeVisible();
+  await page.locator('[data-course="starting-seo"] .course-start').click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Starting SEO as your Home Based Business");
+  const video = page.locator("video");
+  await expect.poll(() => video.evaluate((element) => (element as HTMLVideoElement).duration)).toBeGreaterThan(0);
+  await page.getByRole("button", { name: "Play Function Parameters", exact: true }).click();
+  await expect.poll(() => video.evaluate((element) => (element as HTMLVideoElement).currentTime)).toBeGreaterThan(0.1);
+  await page.getByRole("button", { name: "Pause video" }).click();
+  await expect.poll(() => video.evaluate((element) => (element as HTMLVideoElement).paused)).toBe(true);
+
+  await page.locator(".lesson-details > summary").click();
+  await page.getByRole("button", { name: "Mark complete", exact: true }).click();
+  await expect(page.getByRole("progressbar", { name: "Course completion" })).toHaveAttribute("aria-valuenow", "67");
+  await page.getByRole("button", { name: "Completed", exact: true }).click();
+  await expect(page.getByRole("progressbar", { name: "Course completion" })).toHaveAttribute("aria-valuenow", "67");
+
+  const ask = page.getByRole("button", { name: "Ask a question", exact: true });
+  await ask.click();
+  await page.getByRole("button", { name: "Submit Question" }).focus();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Close ask a question" })).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(page.getByRole("button", { name: "Submit Question" })).toBeFocused();
+  await page.getByLabel("Your question", { exact: true }).fill("How can I choose a useful page title?");
+  await page.keyboard.press("Escape");
+  await expect(ask).toBeFocused();
+  await ask.click();
+  await expect(page.getByLabel("Your question", { exact: true })).toHaveValue("How can I choose a useful page title?");
+  await page.getByRole("button", { name: "Submit Question" }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Question saved." })).toBeVisible();
+  const questionAudit = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+  expect(questionAudit.violations).toEqual([]);
+  await page.keyboard.press("Escape");
+
+  await page.getByRole("button", { name: /^Course Overview, exam/ }).click();
+  await expect(page.getByRole("dialog", { name: "Course Exam", exact: true })).toBeVisible();
+  await expect.poll(() => video.evaluate((element) => (element as HTMLVideoElement).paused)).toBe(true);
+  await page.getByLabel("Understanding the searcher’s intent", { exact: true }).check();
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await page.getByLabel("A beginner’s guide to SEO", { exact: true }).check();
+  const examAudit = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+  expect(examAudit.violations).toEqual([]);
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: /^Course Overview, exam/ }).click();
+  await expect(page.getByText("Question 2 of 3", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("A beginner’s guide to SEO", { exact: true })).toBeChecked();
+  await page.keyboard.press("Escape");
+  await page.reload();
+  await page.getByRole("button", { name: /^Course Overview, exam/ }).click();
+  await expect(page.getByText("Question 2 of 3", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("A beginner’s guide to SEO", { exact: true })).toBeChecked();
+  await page.getByRole("button", { name: "Question 3", exact: true }).click();
+  await page.getByLabel("To help readers find a related useful page", { exact: true }).check();
+  await page.getByRole("button", { name: "Submit Exam" }).click();
+  await expect(page.getByRole("heading", { name: "Exam complete" })).toBeVisible();
+  await expect(page.getByText("3 of 3", { exact: true })).toBeVisible();
+  await page.keyboard.press("Escape");
+
+  await page.getByRole("button", { name: /^Course Exercise \/ Reference Files, PDF material/ }).click();
+  await expect(page.getByRole("dialog", { name: "Course Material", exact: true })).toBeVisible();
+  await expect(page.locator(".pdf-frame")).toHaveAttribute("src", /seo-workbook\.pdf/);
+  const pdf = await request.get("/materials/seo-workbook.pdf");
+  expect(pdf.ok()).toBe(true);
+  expect(pdf.headers()["content-type"]).toBe("application/pdf");
+  expect((await pdf.body()).subarray(0, 5).toString()).toBe("%PDF-");
+  await page.keyboard.press("Escape");
+
+  await page.getByRole("button", { name: "Open leaderboard" }).click();
+  await expect(page.getByRole("dialog", { name: "Leaderboard", exact: true })).toBeVisible();
+  await expect(page.locator('.leaderboard-motivation [lang="ar"]')).toBeVisible();
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "Go to comments" }).click();
+  await page.getByLabel("Write a Comment", { exact: true }).fill("   ");
+  await page.getByRole("button", { name: "Submit Review" }).click();
+  await expect(page.getByText("Write a comment before submitting.", { exact: true })).toBeVisible();
+  await page.getByLabel("Write a Comment", { exact: true }).fill("The workbook made this lesson much easier to follow.");
+  await page.getByRole("button", { name: "Submit Review" }).click();
+  await expect(page.getByText("The workbook made this lesson much easier to follow.", { exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Courses", exact: true }).click();
+  await expect(page.locator('[data-course="starting-seo"] .card-progress-label strong')).toHaveText("67%");
+  await page.locator('[data-course="web-development"] .course-start').click();
+  await expect(page.locator(".lesson-details summary")).toContainText("Welcome to the Web");
+  await page.getByRole("button", { name: "Styling with CSS", exact: true }).click();
+  await page.getByRole("link", { name: "Courses", exact: true }).click();
+  await page.locator('[data-course="web-development"] .course-start').click();
+  await expect(page.locator(".lesson-details summary")).toContainText("Welcome to the Web");
+  expect(errors).toEqual([]);
+});
+
+test("production page accessibility, useful 404 and safe malformed persistence", async ({ page }) => {
+  await page.goto("/courses");
+  const catalogAudit = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+  expect(catalogAudit.violations).toEqual([]);
+  await page.evaluate(() => localStorage.setItem("itlegend:course:v1:starting-seo", "not json"));
+  await page.goto("/courses/starting-seo");
+  await expect(page.getByRole("progressbar", { name: "Course completion" })).toHaveAttribute("aria-valuenow", "58");
+  const playerAudit = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+  expect(playerAudit.violations).toEqual([]);
+  const response = await page.goto("/courses/unknown-course");
+  expect(response?.status()).toBe(404);
+  await expect(page.getByRole("heading", { name: "Course not found" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Browse courses" })).toBeVisible();
+});
+
+test("sticky mobile video retains its node and playback; desktop wide and fullscreen restore", async ({ page }, testInfo) => {
+  await page.goto("/courses/starting-seo");
+  const video = page.locator("video");
+  await expect.poll(() => video.evaluate((element) => (element as HTMLVideoElement).duration)).toBeGreaterThan(0);
+  await video.evaluate((element) => { (element as HTMLVideoElement).playbackRate = 0.5; Object.defineProperty(window, "retainedVideo", { value: element, configurable: true }); });
+  await page.getByRole("button", { name: "Play Function Parameters", exact: true }).click();
+  await expect.poll(() => video.evaluate((element) => (element as HTMLVideoElement).currentTime)).toBeGreaterThan(0.1);
+  if (testInfo.project.name === "mobile") {
+    await page.getByRole("button", { name: "Go to comments" }).click();
+    await expect.poll(async () => (await page.getByTestId("video-stage").boundingBox())?.y).toBeLessThan(2);
+    expect(await video.evaluate((element) => (window as Window & { retainedVideo?: HTMLVideoElement }).retainedVideo === element)).toBe(true);
+    expect(await video.evaluate((element) => (element as HTMLVideoElement).paused)).toBe(false);
+    await expect(page.locator("#comments")).toBeFocused();
+  } else {
+    await page.getByRole("button", { name: "Pause video" }).click();
+    const before = (await page.getByTestId("video-stage").boundingBox())!.width;
+    await page.getByRole("button", { name: "Enter wide video mode" }).click();
+    await expect(page.locator(".player-sidebar")).toBeHidden();
+    expect((await page.getByTestId("video-stage").boundingBox())!.width).toBeGreaterThan(before);
+    expect(await video.evaluate((element) => (window as Window & { retainedVideo?: HTMLVideoElement }).retainedVideo === element)).toBe(true);
+    await page.getByRole("button", { name: "Exit wide video mode" }).click();
+    await expect(page.locator(".player-sidebar")).toBeVisible();
+    await page.getByRole("button", { name: "Fullscreen video", exact: true }).click();
+    await expect.poll(() => page.evaluate(() => !!document.fullscreenElement)).toBe(true);
+    await page.getByRole("button", { name: "Exit fullscreen video", exact: true }).click();
+    await expect.poll(() => page.evaluate(() => document.fullscreenElement === null)).toBe(true);
+  }
+});
+
+test("media failures stay recoverable", async ({ page }) => {
+  await page.route("**/videos/lesson-demo.mp4", (route) => route.abort());
+  await page.goto("/courses/web-development");
+  await expect(page.getByText("This video could not load. Check your connection and try again.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Try again", exact: true })).toBeEnabled();
+});
+
+test("PDF material has a readable fallback when native PDF viewing is unavailable", async ({ page }) => {
+  await page.addInitScript(() => Object.defineProperty(navigator, "pdfViewerEnabled", { value: false, configurable: true }));
+  await page.goto("/courses/starting-seo");
+  await page.getByRole("button", { name: /^Course Exercise \/ Reference Files, PDF material/ }).click();
+  await expect(page.locator(".pdf-page-preview img")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open PDF in a new tab", exact: true })).toHaveAttribute("href", "/materials/seo-workbook.pdf");
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog", { name: "Course Material", exact: true })).toBeHidden();
+});
