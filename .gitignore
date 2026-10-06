@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+dist/
+.tools/
+.reference/
+.sites-runtime/
+.env*
+!.env.example
+*.docx
+*.tsbuildinfo
+test-results/
+playwright-report/
+*.log
+.DS_Store
+Thumbs.db
