@@ -1,6 +1,6 @@
 # Production validation
 
-Initial checks completed on 6 October 2026 against the real Next.js 16.3.8 static production export. The 7 October migration and popup refinement checks are recorded below. Local browser tests used Chrome 154 on Windows and Node.js 24.11.1. These are lab results; actual visitor performance depends on the host, network, and device.
+Initial checks completed on 6 October 2026 against the real Next.js 16.3.8 static production export. The 7 October migration, popup refinement, and quiz swipe checks are recorded below. Local browser tests used Chrome 154 on Windows and Node.js 24.11.1. These are lab results; actual visitor performance depends on the host, network, and device.
 
 ## Build and acceptance
 
@@ -24,7 +24,7 @@ The software keyboard and orientation lock on physical phones remain manual devi
 
 ## Lighthouse: historical measurements from 6 October
 
-These measurements predate the popup refinements. Lighthouse was not rerun after those changes, so the scores below do not establish the refined popups' current performance.
+These measurements predate the popup refinements and quiz swipe navigation. Lighthouse was not rerun after those changes, so the scores below do not establish the refined popups' current performance.
 
 Lighthouse **13.5.0**, production server at `http://127.0.0.1:3000`, Brotli/gzip text compression enabled, cold page loads. Audits ran sequentially with simulated throttling. Mobile used 412 × 823, DPR 1.75, 150 ms RTT, 1638.4 Kbps throughput, and 4× CPU slowdown. Desktop used 1252 × 900, DPR 1, the Lighthouse desktop preset (40 ms RTT, 10240 Kbps, 1× CPU).
 
@@ -94,3 +94,22 @@ GitHub Pages successfully built and deployed [source commit e42b29f](https://git
 Independent checks of the [public Starting SEO player](https://abdallahkhale.github.io/itlegend-course-platform/courses/starting-seo/) passed all **eight popup cases** at **1252 × 900** and **430 × 932**. Both layouts verified the five-question quiz and retained selection, incomplete-submission validation, viewport-filling PDF with HTTP 200 and `application/pdf` bytes, retained question draft, progress-based Arabic encouragement with native emoji, both section jumps, close controls, and restored focus. No horizontal overflow, first-party HTTP failures, or JavaScript runtime errors occurred. Live quiz, painted native PDF, and leaderboard screenshots were visually inspected.
 
 Physical-phone software keyboard/orientation checks and complete-board pixel equality retain the limits described above. Lighthouse measurements remain the historical 6 October results.
+
+## Quiz swipe navigation
+
+The quiz now advances with a left swipe or drag and returns with a right swipe or drag. The five numbered buttons remain available for keyboard and pointer navigation; Submit Exam appears only on question five. Answers, saved position, countdown, storage recovery, and legacy handling retain their existing behavior. The result view does not navigate by gesture.
+
+Local acceptance completed on **7 October 2026**:
+
+- Lint and TypeScript passed without warnings. All **seven state tests** passed. Root-path and repository-prefixed production builds each prerendered all ten pages.
+- All **twenty root-path production browser checks passed in 1.3 minutes**, including four added gesture checks. Native touch scenarios ran at **320 × 568** and **932 × 430**; mouse scenarios ran at **1252 × 900** and **430 × 932**. The sixteen existing journeys still passed, including accessibility scans with zero violations, playback, persistence, timer/legacy behavior, blocked storage, section actions, leaderboard, compressed/range delivery, and PDF fallback scrolling.
+- Gesture checks verify left/right navigation, unselected answer rows after dragging, ordinary native answer taps after swipes, keyboard circle/radio navigation, short/vertical/cancelled/multi-touch rejection, native vertical scrolling, both question boundaries, and a complete **5 of 5** result. They also verify captured mouse release outside the card, closing during a drag, and a vertical mouse release outside the card followed by native touch answer changes on a hybrid device.
+- A mouse regression reproduced the earlier failure: dragging right at question one's prompt selected text, so the following left drag on an answer became native text dragging rather than question navigation. The final mouse-only `selectstart` guard passes that sequence without selecting an answer or leaving selected text. The controlled four answer slots stay mounted across questions.
+- All **four repository-prefix checks passed in 7.2 seconds**. They verify all six deep routes, quiz dragging without an accidental answer, media and asset links, exact viewport PDF bounds, valid PDF bytes, Escape dismissal, and restored opener focus.
+- Current quiz and painted native PDF captures were visually inspected at **320 × 568** and **932 × 430**. Question text and selected markers remain readable; longer content scrolls inside the quiz. The native workbook renders with its browser toolbar, and close/open/download controls remain reachable. Existing fallback scrolling checks also passed.
+
+Chromium 154's raw touch input can omit a tap's compatibility click immediately after a synthetic flick. The same failure reproduced on a plain four-radio HTML card in all nine combinations of three viewport sizes and no handlers/capture-only/capture-plus-cancellation. Allowing **500 ms** for the test browser's recognizer to settle, then sending an **80 ms** native finger contact, passed all nine baselines and the quiz regressions through native label clicks and radio defaults. This is a test fixture constraint; application navigation remains synchronous and adds no delay or programmatic answer-selection fallback.
+
+An independent review of the final repository-prefixed export passed at **1252 × 900**, **430 × 932**, **320 × 568**, and **932 × 430**. It used mouse input on desktop and native touch streams on the other sizes, verifying swipe rejection/boundaries, post-swipe answer taps, retained answers/position, numbered navigation, submission/results, exact viewport PDF bounds, HTTP 200 `application/pdf` workbook bytes, native close-button activation, reopen/Escape, and restored focus. No horizontal overflow, first-party HTTP failures, or JavaScript runtime errors occurred. Current quiz/PDF screenshots were inspected.
+
+Public publication of this swipe refinement is pending. The published popup workflow evidence above predates these changes. Physical-phone checks and complete-board reference limits remain unchanged, and Lighthouse was not rerun.

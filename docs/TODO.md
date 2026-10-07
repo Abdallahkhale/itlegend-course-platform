@@ -105,7 +105,7 @@ Search, filters, accounts, enrollment, and remote APIs are not required. Priorit
 
 - [x] Run lint, typecheck, and production build.
 - [x] Serve the production output and test real routes/assets.
-- [x] Verify root-path and repository-prefixed production builds, ten existing desktop/mobile journeys, and four project-prefix checks. Revalidated 7 October 2026.
+- [x] Verify root-path and repository-prefixed production builds, twenty desktop/mobile browser checks, and four project-prefix checks. Revalidated with swipe navigation on 7 October 2026.
 - [x] Capture and inspect desktop/mobile screenshots matching the reference and additional 320/768/1024 widths.
 - [x] Verify no horizontal scroll, overlap, clipped content, or unreachable overlay controls.
 - [x] Test long titles/comments and varying lesson counts.
@@ -140,6 +140,16 @@ Suggested commits: requirements/setup; typed content/assets; catalog/responsive 
 - [x] Verify PDF bytes, internal fallback scrolling, reachable close controls, and focus restoration at 320-pixel and landscape sizes.
 - [x] Pass lint, TypeScript, seven state tests, sixteen root production browser checks, and four project-prefix checks; inspect ten responsive popup screenshots.
 - [x] Publish and verify these popup refinements on the public demo. GitHub Pages deployment and eight independent live desktop/mobile popup checks passed on 7 October 2026; see docs/VALIDATION.md.
+
+## 12. Quiz swipe navigation
+
+- [x] Replace visible quiz Previous/Next buttons with left-next/right-previous swipes and drags, retain the five numbered buttons, and add a compact direction hint.
+- [x] Show Submit Exam only on question five, stop at both question boundaries, and leave the result view outside gesture navigation.
+- [x] Preserve ordinary radio taps/keyboard choice, vertical touch scrolling, retained answers/position, countdown behavior, and legacy attempts.
+- [x] Verify real touch swipes, short/vertical/cancelled/multi-touch rejection, mouse capture outside the card, close-mid-drag cancellation, and keyboard circle navigation.
+- [x] Reverify exact full-viewport PDF dimensions, valid bytes, native rendering, fallback scrolling, reachable close controls, and restored focus at narrow/landscape sizes.
+- [x] Pass lint, TypeScript, seven state tests, both production builds, twenty root production browser checks, and four repository-prefix checks; inspect current narrow/landscape quiz and PDF captures.
+- [ ] Publish and verify swipe navigation on the public demo after local acceptance.
 
 ## Decisions and browser constraints
 

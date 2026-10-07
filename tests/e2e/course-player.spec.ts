@@ -57,7 +57,7 @@ test("catalog, playback, completion, retained popups, comment and synchronized p
   await page.getByRole("radio", { name: "Adding as many keywords as possible", exact: true }).focus();
   await page.keyboard.press("ArrowRight");
   await expect(page.getByLabel("Understanding the searcher’s intent", { exact: true })).toBeChecked();
-  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await page.getByRole("button", { name: "Question 2", exact: true }).click();
   await page.getByLabel("A beginner’s guide to SEO", { exact: true }).check();
   const examAudit = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
   expect(examAudit.violations).toEqual([]);
@@ -85,12 +85,14 @@ test("catalog, playback, completion, retained popups, comment and synchronized p
 
   await page.getByRole("button", { name: /^Course Exercise \/ Reference Files.*PDF material/ }).click();
   await expect(page.getByRole("dialog", { name: "Course Material", exact: true })).toBeVisible();
+  expect(await page.getByRole("dialog", { name: "Course Material", exact: true }).boundingBox()).toEqual({ x: 0, y: 0, ...page.viewportSize() });
   await expect(page.locator(".pdf-frame")).toHaveAttribute("src", /seo-workbook\.pdf/);
   const pdf = await request.get("/materials/seo-workbook.pdf");
   expect(pdf.ok()).toBe(true);
   expect(pdf.headers()["content-type"]).toBe("application/pdf");
   expect((await pdf.body()).subarray(0, 5).toString()).toBe("%PDF-");
   await page.keyboard.press("Escape");
+  await expect(page.getByRole("button", { name: /^Course Exercise \/ Reference Files.*PDF material/ })).toBeFocused();
 
   await page.getByRole("button", { name: "Open leaderboard" }).click();
   await expect(page.getByRole("dialog", { name: "Leaderboard", exact: true })).toBeVisible();
@@ -192,6 +194,8 @@ test("PDF fallback scrolls internally and keeps fullscreen close controls reacha
     await expect.poll(() => page.locator(".pdf-page-preview img").evaluate((image) => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
     expect((await dialog.boundingBox())!.width).toBe(viewport.width);
     expect((await dialog.boundingBox())!.height).toBe(viewport.height);
+    expect((await dialog.boundingBox())!.x).toBe(0);
+    expect((await dialog.boundingBox())!.y).toBe(0);
     expect(await dialog.evaluate((element) => element.scrollWidth === element.clientWidth)).toBe(true);
     await page.locator(".pdf-page-preview").evaluate((element) => { element.scrollTop = element.scrollHeight; });
     expect(await page.locator(".pdf-page-preview").evaluate((element) => element.scrollTop)).toBeGreaterThan(0);

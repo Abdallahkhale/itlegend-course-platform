@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 const prefix = process.env.NEXT_PUBLIC_BASE_PATH?.replace(/\/+$/, "") || "/itlegend-course-platform";
 const slugs = ["starting-seo", "web-development", "ui-design", "digital-marketing", "javascript", "content-writing"];
 
-test("project-path export supports catalog, deep routes and real media/material assets", async ({ page, request, baseURL }) => {
+test("project-path export supports catalog, deep routes, swipe quiz and real media/material assets", async ({ page, request, baseURL }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("response", (response) => {
@@ -41,13 +41,28 @@ test("project-path export supports catalog, deep routes and real media/material 
   expect(range.status()).toBe(206);
   expect((await range.body()).length).toBe(32);
 
+  await page.getByRole("button", { name: /^Course Overview.*exam/ }).click();
+  const exam = page.getByRole("dialog", { name: "Course Exam", exact: true });
+  await expect(exam.locator(".exam-question-nav button")).toHaveCount(5);
+  await expect(exam.getByRole("button", { name: /^(Previous|Next)$/ })).toHaveCount(0);
+  const option = (await exam.locator(".exam-choices label").first().boundingBox())!;
+  await page.mouse.move(option.x + option.width * 0.75, option.y + option.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(option.x + option.width * 0.25, option.y + option.height / 2, { steps: 10 });
+  await page.mouse.up();
+  await expect(exam.locator('[aria-current="step"]')).toHaveText("2");
+  await expect(exam.locator("input:checked")).toHaveCount(0);
+  await page.keyboard.press("Escape");
+
   await page.getByRole("button", { name: /^Course Exercise \/ Reference Files.*PDF material/ }).click();
+  expect(await page.getByRole("dialog", { name: "Course Material", exact: true }).boundingBox()).toEqual({ x: 0, y: 0, ...page.viewportSize() });
   await expect(page.locator(".pdf-frame")).toHaveAttribute("src", `${prefix}/materials/seo-workbook.pdf#view=FitH`);
   await expect(page.getByRole("link", { name: "Open PDF in a new tab", exact: true })).toHaveAttribute("href", `${prefix}/materials/seo-workbook.pdf`);
   const pdf = await request.get(`${prefix}/materials/seo-workbook.pdf`);
   expect(pdf.ok()).toBe(true);
   expect((await pdf.body()).subarray(0, 5).toString()).toBe("%PDF-");
   await page.keyboard.press("Escape");
+  await expect(page.getByRole("button", { name: /^Course Exercise \/ Reference Files.*PDF material/ })).toBeFocused();
   await page.getByRole("button", { name: "Open leaderboard" }).click();
   for (const image of await page.locator(".leaderboard-list img").evaluateAll((items) => items.map((item) => item.getAttribute("src")!))) expect((await request.get(image)).ok()).toBe(true);
   await page.keyboard.press("Escape");

@@ -215,6 +215,7 @@ textarea::placeholder { color: #757575; opacity: 1; }
 .exam-question-nav button.is-active { background: #fff; color: #3e53b3; border-color: #fff; font-weight: 600; }
 .exam-question-nav button.is-answered:not(.is-active) { border-width: 2px; background: rgb(255 255 255 / .13); }
 .exam-card, .exam-result { padding: 32px; border-radius: 15px; background: #fff; box-shadow: 0 10px 32px rgb(22 36 98 / .1); }
+.exam-card { touch-action: pan-y pinch-zoom; }
 .exam-card legend { float: left; width: 100%; font-size: 17px; font-weight: 500; line-height: 1.65; margin-bottom: 22px; }
 .exam-number { display: block; margin-bottom: 6px; font-size: 15px; }
 .exam-choices { clear: both; display: grid; gap: 14px; }
@@ -224,7 +225,8 @@ textarea::placeholder { color: #757575; opacity: 1; }
 .exam-choices input { appearance: none; display: grid; place-items: center; width: 18px; height: 18px; margin: 0; flex: 0 0 auto; border: 1px solid #7a8fd9; border-radius: 2px; background: #fff; }
 .exam-choices input:checked { border-color: #fff; }
 .exam-choices input:checked::after { content: ""; width: 9px; height: 5px; border-left: 2px solid #3e53b3; border-bottom: 2px solid #3e53b3; transform: translateY(-1px) rotate(-45deg); }
-.exam-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 24px; }
+.exam-swipe-hint { margin-top: 18px; color: var(--color-body); font-size: 12px; }
+.exam-bottom { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 20px; }
 .exam-primary { background: #4055c5; color: #fff; }
 .exam-primary:hover { background: #2c409f; }
 .exam-saved { margin-top: 18px; color: var(--color-body); font-size: 12px; }
