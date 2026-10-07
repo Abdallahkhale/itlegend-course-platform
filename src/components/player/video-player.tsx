@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Maximize, Minimize, Pause, Play, RectangleHorizontal, Volume2, VolumeX } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
+import { withBasePath } from "@/lib/paths";
 import type { Lesson } from "@/types/course";
 
 function timeLabel(value: number) {
@@ -61,8 +62,8 @@ export function VideoPlayer({ lesson, wide, pauseSignal, onWideChange, onEnded }
 
   return (
     <div ref={stageRef} className={`video-stage ${started ? "has-started" : ""} ${fullscreen ? "is-fullscreen" : ""}`} data-testid="video-stage">
-      <video ref={videoRef} src={lesson.video} poster={lesson.poster} playsInline preload="metadata" aria-label={`${lesson.title} lesson video`} onLoadStart={() => { setStarted(false); setDuration(0); setCurrentTime(0); setError(""); }} onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)} onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)} onPlay={() => { setPlaying(true); setStarted(true); }} onPause={() => setPlaying(false)} onEnded={onEnded} onError={() => setError("This video could not load. Check your connection and try again.")} onVolumeChange={(event) => { setVolume(event.currentTarget.volume); setMuted(event.currentTarget.muted); }} onRateChange={(event) => setRate(event.currentTarget.playbackRate)}>
-        <track kind="captions" src="/videos/demo-captions.vtt" srcLang="en" label="English" />
+      <video ref={videoRef} src={lesson.video ? withBasePath(lesson.video) : undefined} poster={lesson.poster ? withBasePath(lesson.poster) : undefined} playsInline preload="metadata" aria-label={`${lesson.title} lesson video`} onLoadStart={() => { setStarted(false); setDuration(0); setCurrentTime(0); setError(""); }} onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)} onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)} onPlay={() => { setPlaying(true); setStarted(true); }} onPause={() => setPlaying(false)} onEnded={onEnded} onError={() => setError("This video could not load. Check your connection and try again.")} onVolumeChange={(event) => { setVolume(event.currentTarget.volume); setMuted(event.currentTarget.muted); }} onRateChange={(event) => setRate(event.currentTarget.playbackRate)}>
+        <track kind="captions" src={withBasePath("/videos/demo-captions.vtt")} srcLang="en" label="English" />
       </video>
       {!started && <button className="video-play-button" type="button" onClick={togglePlay} aria-label={`Play ${lesson.title}`}><Play fill="currentColor" size={26} strokeWidth={0} aria-hidden="true" /></button>}
       <div className="video-controls">

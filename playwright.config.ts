@@ -6,6 +6,7 @@ const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || (existsSync
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  testIgnore: "**/base-path.spec.ts",
   fullyParallel: false,
   workers: 1,
   retries: 0,

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CoursePlayer } from "@/components/player/course-player";
 import { courses, getLessons } from "@/data/courses";
+import { withBasePath } from "@/lib/paths";
 
 export const dynamicParams = false;
 
@@ -20,5 +21,5 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
   const course = courses.find((item) => item.slug === slug);
   if (!course) notFound();
   const poster = getLessons(course).find((lesson) => lesson.kind === "video")?.poster;
-  return <>{poster && <link rel="preload" as="image" href={poster} fetchPriority="high" />}<CoursePlayer course={course} /></>;
+  return <>{poster && <link rel="preload" as="image" href={withBasePath(poster)} fetchPriority="high" />}<CoursePlayer course={course} /></>;
 }

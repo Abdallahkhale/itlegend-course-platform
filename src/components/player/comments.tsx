@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ArrowRight, UserRound } from "lucide-react";
+import { withBasePath } from "@/lib/paths";
 import type { CourseComment } from "@/types/course";
 
 export function Comments({ comments, onAdd }: { comments: CourseComment[]; onAdd: (comment: CourseComment) => void }) {
@@ -19,7 +20,7 @@ export function Comments({ comments, onAdd }: { comments: CourseComment[]; onAdd
     <section id="comments" className="comments-section" aria-labelledby="comments-title" tabIndex={-1}>
       <h2 id="comments-title">Comments</h2>
       <ol className="comment-list">{comments.map((comment) => <li key={comment.id} className="comment">
-        {comment.avatar ? <Image className="comment-avatar" src={comment.avatar} alt="" width={54} height={54} /> : <span className="comment-avatar generated-avatar"><UserRound size={24} aria-hidden="true" /></span>}
+        {comment.avatar ? <Image className="comment-avatar" src={withBasePath(comment.avatar)} alt="" width={54} height={54} /> : <span className="comment-avatar generated-avatar"><UserRound size={24} aria-hidden="true" /></span>}
         <div className="comment-content"><h3>{comment.name}</h3><time dateTime={comment.date}>{new Date(`${comment.date}T12:00:00`).toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}</time><p>{comment.text}</p></div>
       </li>)}</ol>
       <form className="comment-form" onSubmit={submit} noValidate>

@@ -51,8 +51,17 @@ The question/leaderboard body reference does not contain a fully legible exact d
 
 Questions, comments, quiz attempts, resume, and completions are device-local mock data. The short silent sample MP4 verifies working media behavior and is not an instructional recording. Real recordings would replace the typed media URLs.
 
-## Publication
+## GitHub Pages migration
 
-The [public GitHub repository](https://github.com/Abdallahkhale/itlegend-course-platform) includes the complete implementation and logical commits. Native Site deployment reported **succeeded** on 6 October 2026, and the audience is confirmed **public**. The literal URL from the successful deployment is [the live demo](https://itlegend-course-player-abdallah.abdallahkha211.chatgpt.site). The source repository was pushed and its static archive saved before deployment.
+The [public repository](https://github.com/Abdallahkhale/itlegend-course-platform) uses an official GitHub Pages Actions workflow. Pages is configured as public, HTTPS enforced, and workflow-driven at [the demo URL](https://abdallahkhale.github.io/itlegend-course-platform/). The build sets `NEXT_PUBLIC_BASE_PATH=/itlegend-course-platform`; ordinary local builds keep an empty prefix.
 
-The portable hosting helpers needed Windows compatibility settings: native npm produced the build, Git Bash was selected ahead of the WSL launcher, and GNU tar used `TAR_OPTIONS=--force-local` for the Windows archive path. This affects packaging only; the published application remains an ordinary Next.js static export.
+Migration checks completed on **7 October 2026**, using Node.js 24.11.1 and the installed Windows Chrome 154:
+
+- Lint and TypeScript passed; all three saved-state tests passed.
+- The repository-prefixed production export built successfully and prerendered all ten pages. Both prefix scenarios passed on desktop and mobile: **four checks in 11.8 seconds**. They verify all six deep course routes, native anchor navigation, actual video playback, poster/image preload, captions, a 32-byte media range, PDF links and bytes, the PDF preview fallback, course photos, comment/leaderboard avatars, favicon, and the prefixed 404 return link. The main prefix journey reported no failed first-party requests or JavaScript runtime errors.
+- A fresh root-path production export also built successfully with all ten pages. All **ten existing desktop/mobile browser journeys passed in 32.4 seconds**, including retained state, media controls, dialogs, completion, accessibility scans, sticky/wide/fullscreen behavior, compressed delivery, missing-media recovery, and 404/PDF fallback behavior.
+- The current tracked source and documentation contain no former demo-hosting or model-attribution markers. Local hosting metadata is ignored and excluded from the repository.
+
+Public workflow deployment and live catalog/player/asset verification remain pending. The existing screenshot/Lighthouse results above remain the measurements from 6 October of the unchanged interface; these were not rerun for this path-only migration.
+
+Mobile checks use a responsive website in browser emulation; they do not establish native Android/iOS application support. Browser storage is origin-specific and is not automatically transferred to a new hostname.

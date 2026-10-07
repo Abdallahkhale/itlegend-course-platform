@@ -2,7 +2,9 @@
 
 A responsive course catalog and player built for the [IT Legend frontend challenge](https://challenges.itlegend.net/frontend-hiring). The player follows the supplied desktop/mobile design: a compact course header, a 3:2 video stage, course materials, progress, curriculum, comments, and focused dialogs.
 
-[Live demo](https://itlegend-course-player-abdallah.abdallahkha211.chatgpt.site) · [Public repository](https://github.com/Abdallahkhale/itlegend-course-platform)
+[Live demo](https://abdallahkhale.github.io/itlegend-course-platform/) · [Public repository](https://github.com/Abdallahkhale/itlegend-course-platform)
+
+The stack is Next.js App Router, React, TypeScript, plain CSS, and Lucide icons. This is a responsive website that runs in desktop and mobile browsers; it is not a native Android or iOS application.
 
 ## Run locally
 
@@ -21,6 +23,33 @@ npm run start
 ```
 
 `npm run start` serves `out/` with Brotli/gzip negotiation for text, correct asset types, uncompressed video byte ranges, and a useful 404 page. The same `out/` directory can be hosted by any static host supporting directory routes and `404.html`.
+
+## Open on a phone
+
+Open the public demo in the phone's browser. To test local changes, connect the phone and computer to the same Wi-Fi network, then run:
+
+```sh
+npm run dev -- --hostname 0.0.0.0
+```
+
+Find the computer's local IPv4 address with `ipconfig` on Windows. On the phone, open `http://<computer-IP>:3000`, for example `http://192.168.1.20:3000`. The address is the computer's IP, rather than `localhost` on the phone.
+
+## GitHub Pages deployment
+
+The workflow in `.github/workflows/deploy-pages.yml` installs Node.js 24 dependencies, builds the static export, and deploys `out/` to GitHub Pages on a push to `main` or a manual workflow run. It uses the official Pages actions and the `github-pages` deployment environment.
+
+`NEXT_PUBLIC_BASE_PATH` is empty for ordinary local builds. Pages builds set it to `/itlegend-course-platform`; Next.js applies that prefix to generated scripts/styles/fonts, and `withBasePath` applies it to raw anchors and public images/media/PDFs. This setting is embedded at build time, so changing it requires a rebuild. Internal links remain ordinary anchors for reliable static navigation.
+
+Verify the Pages build locally in PowerShell:
+
+```powershell
+$env:NEXT_PUBLIC_BASE_PATH = "/itlegend-course-platform"
+npm run build
+npm run test:basepath
+npm run start
+```
+
+Open `http://localhost:3000/itlegend-course-platform/`. To return to a root-path build, clear the variable with `Remove-Item Env:NEXT_PUBLIC_BASE_PATH` and run `npm run build` again.
 
 ## Routes and behavior
 
@@ -41,7 +70,7 @@ src/components/player/      Media, lesson navigation, materials, curriculum, com
 src/components/ui/          Shared header, icon controls, native dialog primitive
 src/data/                   Typed mock courses and leaderboard
 src/hooks/                  Device-local external store and optional browser tools
-src/lib/                    Pure completion, status, and saved-state validation
+src/lib/                    Completion, saved-state validation, and deployment paths
 src/types/                  Course, lesson, quiz, comment, and progress types
 public/                     Compressed photos, fonts/licenses, MP4, captions, PDF
 tests/                      State correctness and production browser journeys
@@ -60,7 +89,7 @@ The sticky player stays in one DOM node. On mobile, `display: contents` allows i
 
 ## Data and media scope
 
-Everything is a frontend demonstration. Questions, comments, quiz attempts, resume position, and completions stay on the current browser/device under `itlegend:course:v1:<slug>`. No question is sent to an instructor and no account, enrollment, or network data service is implied. Clear this site’s browser storage to restore the seeded examples.
+Everything is a frontend demonstration. Questions, comments, quiz attempts, resume position, and completions stay on the current browser/device under `itlegend:course:v1:<slug>`. Storage is scoped to the website origin, so changing the hostname starts with the seeded examples rather than transferring old progress automatically. No question is sent to an instructor and no account, enrollment, or network data service is implied. Clear this site's browser storage to restore the seeded examples.
 
 The bundled video is MDN’s short silent flower sample, reused to demonstrate actual playback reliably without a remote media dependency. It is not presented as a recorded SEO class. Lesson titles, descriptions, curricula, exams, and learner records are mock content; the PDF is an original practice workbook. See [asset attribution](docs/ASSETS.md).
 
@@ -81,7 +110,9 @@ npm run audit:performance
 
 Browser tests run against the production export, using an installed Windows Chrome when available. Otherwise install Playwright’s Chromium with `npx playwright install chromium`, or set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to your browser path. Tests cover the complete desktop/mobile journey, retained drafts/quiz answers, completion correctness, malformed persistence, actual playback, sticky/wide/fullscreen behavior, missing media, 404s, compressed delivery, and accessibility of the catalog, player, question dialog, and selected quiz answers. For the performance command, keep the production server running and set `CHROME_PATH` if Chrome cannot be found automatically.
 
-Lint, typecheck, build, all three state tests, and all ten production browser tests passed. Lighthouse performance is 97/98 on mobile catalog/player and 100 on desktop; accessibility, best practices, and SEO are 100 in all four runs. These are local production lab measurements, not field performance guarantees. Conditions, responsive review, and reference limits are recorded in [validation evidence](docs/VALIDATION.md). The delivery checklist is in [the implementation plan](docs/TODO.md).
+The separate `test:basepath` suite checks the repository prefix on desktop/mobile: all six deep routes, native anchor navigation, playable video, caption and byte-range delivery, PDF links/bytes/preview, catalog photos, avatars, favicon, and the prefixed 404 return link. It uses port 3001 and requires the prefixed production build shown above.
+
+Validation repeated on 7 October 2026: lint, typecheck, both root and repository-prefixed production builds, all three state tests, and all fourteen production browser checks passed (ten root-path journeys and four project-prefix checks). The interface measurements from 6 October remain unchanged: Lighthouse performance is 97/98 on mobile catalog/player and 100 on desktop; accessibility, best practices, and SEO are 100 in all four runs. These are local production lab measurements, not field performance guarantees. Conditions, responsive review, and reference limits are recorded in [validation evidence](docs/VALIDATION.md). The delivery checklist is in [the implementation plan](docs/TODO.md).
 
 ## Submission
 

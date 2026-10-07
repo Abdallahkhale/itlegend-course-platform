@@ -4,6 +4,7 @@ import { resolve, extname, sep } from "node:path";
 import { createBrotliCompress, createGzip, constants } from "node:zlib";
 
 const root = resolve("out");
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH?.replace(/\/+$/, "") || "";
 const args = process.argv.slice(2);
 const portIndex = args.indexOf("--port");
 const port = Number(portIndex >= 0 ? args[portIndex + 1] : process.env.PORT || 3000);
@@ -24,10 +25,13 @@ createServer((request, response) => {
   if (request.method !== "GET" && request.method !== "HEAD") { response.writeHead(405, { Allow: "GET, HEAD" }).end(); return; }
   let pathname;
   try { pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname); } catch { response.writeHead(400).end(); return; }
+  if (basePath && pathname === basePath) { response.writeHead(301, { Location: `${basePath}/` }).end(); return; }
+  const inBasePath = !basePath || pathname.startsWith(`${basePath}/`);
+  if (inBasePath && basePath) pathname = pathname.slice(basePath.length);
   let file = resolve(root, `.${pathname}`);
   if (file !== root && !file.startsWith(`${root}${sep}`)) { response.writeHead(403).end(); return; }
   if (existsSync(file) && statSync(file).isDirectory()) file = resolve(file, "index.html");
-  const status = existsSync(file) ? 200 : 404;
+  const status = inBasePath && existsSync(file) ? 200 : 404;
   if (status === 404) file = resolve(root, "404.html");
   const size = statSync(file).size;
   const type = mime[extname(file)] || "application/octet-stream";
@@ -49,4 +53,4 @@ createServer((request, response) => {
     if (encoding) stream.pipe(encoding === "br" ? createBrotliCompress({ params: { [constants.BROTLI_PARAM_QUALITY]: 4 } }) : createGzip()).pipe(response);
     else stream.pipe(response);
   }
-}).listen(port, "127.0.0.1", () => process.stdout.write(`Production course platform: http://127.0.0.1:${port}\n`));
+}).listen(port, "127.0.0.1", () => process.stdout.write(`Production course platform: http://127.0.0.1:${port}${basePath}/\n`));

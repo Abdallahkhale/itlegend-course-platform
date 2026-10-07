@@ -1,7 +1,5 @@
 # IT Legend course platform implementation plan
 
-Planning model: GPT-6 Astra, max reasoning. Implementation model: GPT-6.1 Sol, max reasoning.
-
 ## Sources and submission requirements
 
 - [Challenge](https://challenges.itlegend.net/frontend-hiring#submit), public challenge API, and the supplied Task Requirements DOCX, inspected 6 October 2026.
@@ -107,6 +105,7 @@ Search, filters, accounts, enrollment, and remote APIs are not required. Priorit
 
 - [x] Run lint, typecheck, and production build.
 - [x] Serve the production output and test real routes/assets.
+- [x] Verify root-path and repository-prefixed production builds, ten existing desktop/mobile journeys, and four project-prefix checks. Revalidated 7 October 2026.
 - [x] Capture and inspect desktop/mobile screenshots matching the reference and additional 320/768/1024 widths.
 - [x] Verify no horizontal scroll, overlap, clipped content, or unreachable overlay controls.
 - [x] Test long titles/comments and varying lesson counts.
@@ -123,7 +122,8 @@ Search, filters, accounts, enrollment, and remote APIs are not required. Priorit
 - [x] Record asset attribution and actual validation evidence.
 - [x] Create logical commits throughout implementation.
 - [x] Create the public GitHub repository and push complete source.
-- [x] Publish a production demo without login and verify its successful deployment. Native deployment reported succeeded on 6 October 2026; audience is public.
+- [x] Configure GitHub Pages with a public URL, official Actions workflow, and project-prefix support. See README for deployment and phone testing.
+- [ ] Confirm successful GitHub Pages migration after the workflow deploys and the public catalog/player/assets are checked.
 - [x] Add verified repository/demo links to README and deliver both links. See README and docs/SUBMISSION.md.
 - [x] Prepare a submission checklist. User identity fields and final competition submission remain for the user.
 

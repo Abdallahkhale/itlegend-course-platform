@@ -1,7 +1,7 @@
 # Competition submission
 
 - Public source: https://github.com/Abdallahkhale/itlegend-course-platform
-- Live demonstration: https://itlegend-course-player-abdallah.abdallahkha211.chatgpt.site
+- Live demonstration: https://abdallahkhale.github.io/itlegend-course-platform/
 - Challenge form: https://challenges.itlegend.net/frontend-hiring#submit
 
 Before submitting, open both links in a private browser window and try one catalog-to-player journey. Provide your own name, email, phone number, and any other identity fields requested by the form. Add a CV or LinkedIn post only if you want to use the optional fields.

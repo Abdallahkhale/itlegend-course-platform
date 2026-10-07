@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { withBasePath } from "@/lib/paths";
 import "./globals.css";
 
 const poppins = localFont({
@@ -15,7 +16,7 @@ const spartan = localFont({ src: "../../public/fonts/spartan-variable.woff2", we
 export const metadata: Metadata = {
   title: { default: "Courses | IT Legend", template: "%s | IT Legend" },
   description: "Learn at your own pace. Explore courses, watch lessons, use course materials, and track your progress.",
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: withBasePath("/favicon.svg") },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
