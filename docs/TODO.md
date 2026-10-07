@@ -139,7 +139,7 @@ Suggested commits: requirements/setup; typed content/assets; catalog/responsive 
 - [x] Verify legacy migration, timer retention/reset, keyboard selection, unanswered submission, blocked-storage drafts, leaderboard progress/ranks, and curriculum/comments scrolling.
 - [x] Verify PDF bytes, internal fallback scrolling, reachable close controls, and focus restoration at 320-pixel and landscape sizes.
 - [x] Pass lint, TypeScript, seven state tests, sixteen root production browser checks, and four project-prefix checks; inspect ten responsive popup screenshots.
-- [ ] Publish and verify these popup refinements on the public demo.
+- [x] Publish and verify these popup refinements on the public demo. GitHub Pages deployment and eight independent live desktop/mobile popup checks passed on 7 October 2026; see docs/VALIDATION.md.
 
 ## Decisions and browser constraints
 
