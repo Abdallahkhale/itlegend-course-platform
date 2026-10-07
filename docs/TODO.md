@@ -149,7 +149,7 @@ Suggested commits: requirements/setup; typed content/assets; catalog/responsive 
 - [x] Verify real touch swipes, short/vertical/cancelled/multi-touch rejection, mouse capture outside the card, close-mid-drag cancellation, and keyboard circle navigation.
 - [x] Reverify exact full-viewport PDF dimensions, valid bytes, native rendering, fallback scrolling, reachable close controls, and restored focus at narrow/landscape sizes.
 - [x] Pass lint, TypeScript, seven state tests, both production builds, twenty root production browser checks, and four repository-prefix checks; inspect current narrow/landscape quiz and PDF captures.
-- [ ] Publish and verify swipe navigation on the public demo after local acceptance.
+- [x] Publish and verify swipe navigation on the public demo. GitHub Pages deployment and independent live desktop/mobile quiz and PDF checks passed on 7 October 2026; see docs/VALIDATION.md.
 
 ## Decisions and browser constraints
 
