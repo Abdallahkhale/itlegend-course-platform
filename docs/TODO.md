@@ -123,7 +123,7 @@ Search, filters, accounts, enrollment, and remote APIs are not required. Priorit
 - [x] Create logical commits throughout implementation.
 - [x] Create the public GitHub repository and push complete source.
 - [x] Configure GitHub Pages with a public URL, official Actions workflow, and project-prefix support. See README for deployment and phone testing.
-- [ ] Confirm successful GitHub Pages migration after the workflow deploys and the public catalog/player/assets are checked.
+- [x] Confirm successful GitHub Pages migration after the workflow deploys and the public catalog/player/assets are checked. Deployment and live desktop/mobile review passed on 7 October 2026; see docs/VALIDATION.md.
 - [x] Add verified repository/demo links to README and deliver both links. See README and docs/SUBMISSION.md.
 - [x] Prepare a submission checklist. User identity fields and final competition submission remain for the user.
 

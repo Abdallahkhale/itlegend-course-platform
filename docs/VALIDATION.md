@@ -58,10 +58,15 @@ The [public repository](https://github.com/Abdallahkhale/itlegend-course-platfor
 Migration checks completed on **7 October 2026**, using Node.js 24.11.1 and the installed Windows Chrome 154:
 
 - Lint and TypeScript passed; all three saved-state tests passed.
+- Clean installation with npm 11.19.0 passed on Windows (462 packages) without modifying the lock file. Linux x64/glibc lock validation and both production builds passed too. The lock includes the optional `@emnapi/core` and `@emnapi/runtime` 1.11.3 records; existing package versions, resolved URLs, and integrity hashes were preserved.
 - The repository-prefixed production export built successfully and prerendered all ten pages. Both prefix scenarios passed on desktop and mobile: **four checks in 11.8 seconds**. They verify all six deep course routes, native anchor navigation, actual video playback, poster/image preload, captions, a 32-byte media range, PDF links and bytes, the PDF preview fallback, course photos, comment/leaderboard avatars, favicon, and the prefixed 404 return link. The main prefix journey reported no failed first-party requests or JavaScript runtime errors.
 - A fresh root-path production export also built successfully with all ten pages. All **ten existing desktop/mobile browser journeys passed in 32.4 seconds**, including retained state, media controls, dialogs, completion, accessibility scans, sticky/wide/fullscreen behavior, compressed delivery, missing-media recovery, and 404/PDF fallback behavior.
 - The current tracked source and documentation contain no former demo-hosting or model-attribution markers. Local hosting metadata is ignored and excluded from the repository.
 
-Public workflow deployment and live catalog/player/asset verification remain pending. The existing screenshot/Lighthouse results above remain the measurements from 6 October of the unchanged interface; these were not rerun for this path-only migration.
+GitHub Pages successfully built and deployed [source commit f43ea3c](https://github.com/Abdallahkhale/itlegend-course-platform/commit/f43ea3c3dcf1b0224b26efb4ad5b477fca4c682d) in [workflow run 37613203675](https://github.com/Abdallahkhale/itlegend-course-platform/actions/runs/37613203675) on **7 October 2026**. Dependency installation, the Linux production export, artifact upload, and deployment all succeeded.
+
+Independent browser checks of the public catalog and Starting SEO player passed at **1252 × 900** and **430 × 932**. Both views loaded six course cards and photos, navigated to the deep course URL, played the bundled video, and opened the workbook PDF (HTTP 200, `application/pdf`). Fonts loaded, document width matched viewport width, and no first-party HTTP failures or JavaScript runtime errors occurred. Both live screenshots were visually inspected. The repository's About homepage and published README/submission links point to the verified Pages URL.
+
+The existing screenshot/Lighthouse results above remain the measurements from 6 October; performance audits were not rerun for this migration.
 
 Mobile checks use a responsive website in browser emulation; they do not establish native Android/iOS application support. Browser storage is origin-specific and is not automatically transferred to a new hostname.
