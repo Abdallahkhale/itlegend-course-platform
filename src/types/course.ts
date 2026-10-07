@@ -57,7 +57,10 @@ export interface ExamAttempt {
   answers: Record<string, number>;
   position: number;
   submitted: boolean;
+  remainingSeconds?: number;
 }
+
+export type ExamAttemptUpdate = ExamAttempt | ((previous: ExamAttempt | undefined) => ExamAttempt);
 
 export interface CourseProgress {
   completedIds: string[];

@@ -2,7 +2,7 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 import { completeLesson, initialProgress, restoreProgress, STORAGE_PREFIX } from "@/lib/progress-state";
-import type { Course, CourseComment, CourseProgress, ExamAttempt } from "@/types/course";
+import type { Course, CourseComment, CourseProgress, ExamAttemptUpdate } from "@/types/course";
 
 interface Snapshot { progress: CourseProgress; hydrated: boolean; }
 interface Store { snapshot: Snapshot; serverSnapshot: Snapshot; initialized: boolean; listeners: Set<() => void>; }
@@ -56,13 +56,17 @@ export function useCourseProgress(course: Course) {
     () => getStore(course).snapshot,
     () => getStore(course).serverSnapshot,
   );
+  const updateExam = useCallback((id: string, change: ExamAttemptUpdate) => update(course, (previous) => {
+    const attempt = typeof change === "function" ? change(previous.exams[id]) : change;
+    return attempt === previous.exams[id] ? previous : { ...previous, exams: { ...previous.exams, [id]: attempt } };
+  }), [course]);
 
   return {
     ...snapshot,
     selectLesson: (lessonId: string) => update(course, (previous) => ({ ...previous, lessonId })),
     markComplete: (id: string) => update(course, (previous) => completeLesson(course, previous, id)),
     setQuestionDraft: (questionDraft: string) => update(course, (previous) => ({ ...previous, questionDraft })),
-    updateExam: (id: string, attempt: ExamAttempt) => update(course, (previous) => ({ ...previous, exams: { ...previous.exams, [id]: attempt } })),
+    updateExam,
     addComment: (comment: CourseComment) => update(course, (previous) => ({ ...previous, comments: [...previous.comments, comment] })),
   };
 }

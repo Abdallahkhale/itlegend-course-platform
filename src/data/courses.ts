@@ -21,7 +21,7 @@ const seoSections: CourseSection[] = [
     lessons: [
       lesson("introduction", "Introduction", "Meet your instructor and discover how this course will help you build a practical foundation in search engine optimization."),
       lesson("overview", "Course Overview", "Explore the course structure, learning goals, and the simple tools you will use to get started with SEO.", "10:18"),
-      { id: "overview-exam", title: "Course Overview", kind: "exam", duration: "10 MINUTES", description: "Check your understanding before moving on to the next lessons.", questions: seoQuestions.slice(0, 3) },
+      { id: "overview-exam", title: "Course Overview", kind: "exam", duration: "10 MINUTES", description: "Check your understanding before moving on to the next lessons.", questions: seoQuestions },
       { id: "reference-files", title: "Course Exercise / Reference Files", kind: "pdf", duration: "PDF", description: "Use this workbook to plan your first useful page and record your keyword research.", material: "/materials/seo-workbook.pdf", materialPreview: "/images/seo-workbook-preview.webp" },
       lesson("editor", "Code Editor Installation (Optional if you have one)", "Set up a comfortable workspace, install an editor, and organize the files for your practice website.", "06:45"),
       lesson("embedding", "Embedding PHP in HTML", "Understand how a document is structured and how search engines read the content of a page.", "12:36"),
@@ -84,5 +84,7 @@ export const leaderboard = [
   { name: "Ahmed Hassan", points: 1250, avatar: "/images/comment-01.webp" },
   { name: "Sara Ahmed", points: 1180, avatar: "/images/comment-02.webp" },
   { name: "Mohamed Ali", points: 1090, avatar: "/images/comment-03.webp" },
+  { name: "Omar Mostafa", points: 980 },
+  { name: "Nour Adel", points: 930 },
   { name: "You", points: 840 },
 ];

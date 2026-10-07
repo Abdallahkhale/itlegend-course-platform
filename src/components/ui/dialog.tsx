@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { X } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 import { IconButton } from "./icon-button";
 
-interface DialogProps { open: boolean; onClose: () => void; title: string; children: React.ReactNode; fullscreen?: boolean; className?: string; actions?: React.ReactNode; }
+interface DialogProps { open: boolean; onClose: () => void; title: string; children: React.ReactNode; fullscreen?: boolean; className?: string; actions?: React.ReactNode; headerVariant?: "standard" | "back"; context?: string; }
 
-export function Dialog({ open, onClose, title, children, fullscreen = false, className = "", actions }: DialogProps) {
+export function Dialog({ open, onClose, title, children, fullscreen = false, className = "", actions, headerVariant = "standard", context }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
   useEffect(() => {
@@ -34,7 +34,7 @@ export function Dialog({ open, onClose, title, children, fullscreen = false, cla
   }
   return (
     <dialog ref={ref} className={`dialog ${fullscreen ? "dialog-fullscreen" : ""} ${className}`} aria-labelledby={`${titleId}-dialog-title`} onKeyDown={trapTab} onCancel={(event) => { event.preventDefault(); onClose(); }} onClick={(event) => { if (!fullscreen && event.target === event.currentTarget) onClose(); }}>
-      <header className="dialog-header"><h2 id={`${titleId}-dialog-title`}>{title}</h2><div className="dialog-header-actions">{actions}<IconButton label={`Close ${title.toLowerCase()}`} onClick={onClose}><X size={23} /></IconButton></div></header>
+      {headerVariant === "back" ? <header className="dialog-header dialog-header-back"><IconButton label={`Close ${title.toLowerCase()}`} onClick={onClose}><ChevronLeft size={23} /></IconButton><h2 className="sr-only" id={`${titleId}-dialog-title`}>{title}</h2><div className="dialog-header-actions">{actions}</div></header> : <header className="dialog-header"><div className="dialog-header-title">{context && <p className="dialog-header-context">{context}</p>}<h2 id={`${titleId}-dialog-title`}>{title}</h2></div><div className="dialog-header-actions">{actions}<IconButton label={`Close ${title.toLowerCase()}`} onClick={onClose}><X size={23} /></IconButton></div></header>}
       {children}
     </dialog>
   );

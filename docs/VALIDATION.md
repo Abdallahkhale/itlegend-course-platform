@@ -1,6 +1,6 @@
 # Production validation
 
-Checks completed on 6 October 2026 against the real Next.js 16.3.8 static production export. Local browser tests used Chrome 154 on Windows and Node.js 24.11.1. These are lab results; actual visitor performance depends on the host, network, and device.
+Initial checks completed on 6 October 2026 against the real Next.js 16.3.8 static production export. The 7 October migration and popup refinement checks are recorded below. Local browser tests used Chrome 154 on Windows and Node.js 24.11.1. These are lab results; actual visitor performance depends on the host, network, and device.
 
 ## Build and acceptance
 
@@ -22,7 +22,9 @@ Eight additional overlay cases were inspected: question, leaderboard, PDF, and e
 
 The software keyboard and orientation lock on physical phones remain manual device checks. Headless mobile emulation cannot establish actual device/browser orientation support.
 
-## Lighthouse
+## Lighthouse: historical measurements from 6 October
+
+These measurements predate the popup refinements. Lighthouse was not rerun after those changes, so the scores below do not establish the refined popups' current performance.
 
 Lighthouse **13.5.0**, production server at `http://127.0.0.1:3000`, Brotli/gzip text compression enabled, cold page loads. Audits ran sequentially with simulated throttling. Mobile used 412 × 823, DPR 1.75, 150 ms RTT, 1638.4 Kbps throughput, and 4× CPU slowdown. Desktop used 1252 × 900, DPR 1, the Lighthouse desktop preset (40 ms RTT, 10240 Kbps, 1× CPU).
 
@@ -47,7 +49,7 @@ The installed browser does not expose `document.modelContext`, so native WebMCP 
 
 The supplied overview board and original-resolution component fragments were inspected. They establish the exact poster, 3:2 stage ratio, typography, palette, title treatment, material rows, weekly desktop curriculum, mobile accordion structure, comment form, and quiz style. A full-resolution assembled Figma board could not be exported from the public viewer; exact pixel equality of the complete page is not claimed. The implementation is visually compared with the available original fragments and overview.
 
-The question/leaderboard body reference does not contain a fully legible exact design, so their compact pale-surface treatment follows the established palette. Arabic encouragement is original demonstration copy rather than a quote attributed to a real person.
+The original exam fragment is a 153 × 306 image showing the blue backdrop, compact back control, yellow time badge, five question circles, numbered white card, raised answer rows, and square markers. The implementation follows that composition with readable colors and native radio semantics; lesson questions remain mock practice content. The leaderboard overview establishes course context, a compact pale encouragement strip, and separate white row cards within a pale rounded list. Ask a Question follows the comment form's visual style. Arabic encouragement is original Egyptian demonstration copy rather than a quotation attributed to a real person. The PDF reference establishes a closable full-viewport viewer; a separate exact PDF skin is not available.
 
 Questions, comments, quiz attempts, resume, and completions are device-local mock data. The short silent sample MP4 verifies working media behavior and is not an instructional recording. Real recordings would replace the typed media URLs.
 
@@ -70,3 +72,19 @@ Independent browser checks of the public catalog and Starting SEO player passed 
 The existing screenshot/Lighthouse results above remain the measurements from 6 October; performance audits were not rerun for this migration.
 
 Mobile checks use a responsive website in browser emulation; they do not establish native Android/iOS application support. Browser storage is origin-specific and is not automatically transferred to a new hostname.
+
+## Popup refinements
+
+The five-question exam, retained informational countdown, comment-style question popup, and progress-based six-person leaderboard were refined on 7 October 2026. Earlier three-answer submissions retain valid answers and earned course completion, then resume for the unanswered questions. Practice time pauses while the popup is closed; zero does not remove answers or trigger an automatic submission/failure. Drafts and quiz state remain usable in the current page when browser storage is blocked.
+
+Local acceptance completed on **7 October 2026**:
+
+- Lint and TypeScript passed. Both root-path and repository-prefixed production exports built successfully with all ten pages prerendered.
+- All **seven state tests** passed, covering completion, restoration, malformed data, retained legacy three-answer attempts without revoking earned completion, validated remaining time, answer-preserving timer updates, and the six encouragement bands.
+- All **sixteen root-path production browser checks passed in 24.0 seconds** on desktop/mobile. The full journey answers all five questions and reports **5 of 5**. Additional checks verify native radio arrow-key selection, unanswered last-question validation, retained positions/answers, countdown pause across close/reload, zero-time finishing, stopped submitted timers, retry reset, blocked-storage drafts/answers, and accurate six-person ranks at 0%, 58%, and 100% progress. Existing playback, completion, persistence, 404, compressed/range delivery, sticky/wide/fullscreen, and section-focus behavior also passed.
+- Axe scans of the catalog, player, question popup, selected-answer quiz, and leaderboard returned zero WCAG 2 A/AA and 2.1 AA violations.
+- All **four repository-prefix checks passed in 6.8 seconds**, including all six deep routes and working media, material, image, caption, favicon, and 404 links.
+- Ten popup captures were inspected at **320 × 568** and **932 × 430**: question, leaderboard, quiz, native PDF, and PDF fallback at both sizes. Quiz/PDF overlays occupy the exact viewport from x/y = 0; close controls remain reachable, Escape restores opener focus, and there is no horizontal overflow. Longer question/list/quiz content scrolls inside the dialog. The fallback workbook scrolls internally, and the native viewer paints the actual workbook with its browser toolbar. Actual PDF bytes, open links, internal fallback scrolling, and focus restoration passed automated checks; the viewer also exposes workbook download links.
+- At 320 pixels, the quiz card begins at y = 144 with a 12.8-pixel gutter, closely following the compact reference composition. The displayed question circle agrees with the active question; square markers preserve native single-choice behavior and visible keyboard focus. No first-party request failures or JavaScript runtime errors occurred in the core journey or popup review.
+
+Public deployment and live verification of these refinements remain pending. Physical-phone software keyboard/orientation checks and complete-board pixel equality retain the limits described above.

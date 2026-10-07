@@ -129,6 +129,18 @@ Search, filters, accounts, enrollment, and remote APIs are not required. Priorit
 
 Suggested commits: requirements/setup; typed content/assets; catalog/responsive player; media/navigation/progress; dialogs/materials/exams/comments; visual/accessibility fixes; documentation/deployment.
 
+## 11. Popup refinements
+
+- [x] Make every exam five questions with four single-choice answers and preserve valid earlier three-question answers and earned completion.
+- [x] Follow the original exam fragment: compact back control, centered yellow countdown, five question circles, numbered white card, raised answer rows, and square markers with native radio behavior.
+- [x] Add a retained 10/15-minute practice timer that pauses when closed, stops on submission, resets on retry, and preserves answers at zero.
+- [x] Reuse the comment-form styling for Ask a Question and retain its draft when closing/reopening, including blocked-storage sessions.
+- [x] Show course context, a compact encouragement strip, and six sorted leaderboard row cards with original Egyptian Arabic and native emoji.
+- [x] Verify legacy migration, timer retention/reset, keyboard selection, unanswered submission, blocked-storage drafts, leaderboard progress/ranks, and curriculum/comments scrolling.
+- [x] Verify PDF bytes, internal fallback scrolling, reachable close controls, and focus restoration at 320-pixel and landscape sizes.
+- [x] Pass lint, TypeScript, seven state tests, sixteen root production browser checks, and four project-prefix checks; inspect ten responsive popup screenshots.
+- [ ] Publish and verify these popup refinements on the public demo.
+
 ## Decisions and browser constraints
 
 - PDF/exam fullscreen means a viewport-filling accessible overlay; video uses browser fullscreen where supported.

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { PageHeading } from "@/components/ui/page-heading";
 import { useCourseProgress } from "@/hooks/use-course-progress";
 import { useCourseTools } from "@/hooks/use-course-tools";
 import { getLessons } from "@/data/courses";
 import { progressPercentage } from "@/lib/progress-state";
-import type { Course, Lesson } from "@/types/course";
+import type { Course, ExamAttemptUpdate, Lesson } from "@/types/course";
 import { VideoPlayer } from "./video-player";
 import { PlayerToolbar } from "./player-toolbar";
 import { LessonDetails } from "./lesson-details";
@@ -32,6 +32,7 @@ export function CoursePlayer({ course }: { course: Course }) {
   const [popup, setPopup] = useState<Popup>(null);
   const percentage = progressPercentage(course, progress);
   const completed = progress.completedIds.includes(activeLesson.id);
+  const updateActiveExam = useCallback((change: ExamAttemptUpdate) => updateExam(activeLesson.id, change), [activeLesson.id, updateExam]);
 
   function chooseLesson(lesson: Lesson) {
     if (activeLesson.kind === "video") setLastVideoId(activeLesson.id);
@@ -68,9 +69,9 @@ export function CoursePlayer({ course }: { course: Course }) {
         <div className="player-comments"><Comments comments={[...course.comments, ...progress.comments]} onAdd={addComment} /></div>
       </main>
       <QuestionDialog open={popup === "question"} onClose={() => setPopup(null)} lessonTitle={activeLesson.title} draft={progress.questionDraft} onDraftChange={setQuestionDraft} />
-      <LeaderboardDialog open={popup === "leaderboard"} onClose={() => setPopup(null)} percentage={percentage} />
+      <LeaderboardDialog open={popup === "leaderboard"} onClose={() => setPopup(null)} courseTitle={course.title} percentage={percentage} />
       <MaterialDialog open={popup === "pdf"} onClose={() => setPopup(null)} lesson={activeLesson} completed={completed} onComplete={() => markComplete(activeLesson.id)} />
-      <ExamDialog open={popup === "exam"} onClose={() => setPopup(null)} lesson={activeLesson} attempt={progress.exams[activeLesson.id]} onUpdate={(attempt) => updateExam(activeLesson.id, attempt)} onComplete={() => markComplete(activeLesson.id)} />
+      <ExamDialog open={popup === "exam"} onClose={() => setPopup(null)} lesson={activeLesson} attempt={progress.exams[activeLesson.id]} onUpdate={updateActiveExam} onComplete={() => markComplete(activeLesson.id)} />
     </>
   );
 }

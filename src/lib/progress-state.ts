@@ -26,6 +26,20 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+export function examDurationSeconds(duration = "10 MINUTES"): number {
+  const clock = duration.match(/^(\d+):(\d{1,2})$/);
+  if (clock) return Number(clock[1]) * 60 + Number(clock[2]);
+  const minutes = Number.parseInt(duration, 10);
+  return Number.isFinite(minutes) && minutes > 0 ? minutes * 60 : 600;
+}
+
+export function advanceExamTimer(previous: ExamAttempt | undefined, elapsedSeconds: number, durationSeconds: number): ExamAttempt {
+  const attempt = previous ?? { answers: {}, position: 0, submitted: false };
+  if (attempt.submitted) return attempt;
+  const remainingSeconds = Math.max(0, (attempt.remainingSeconds ?? durationSeconds) - Math.max(0, Math.trunc(elapsedSeconds)));
+  return remainingSeconds === attempt.remainingSeconds ? attempt : { ...attempt, remainingSeconds };
+}
+
 export function restoreProgress(course: Course, raw: string | null): CourseProgress {
   const fallback = initialProgress(course);
   if (!raw) return fallback;
@@ -45,7 +59,14 @@ export function restoreProgress(course: Course, raw: string | null): CourseProgr
           const answer = attempt.answers[question.id];
           if (typeof answer === "number" && Number.isInteger(answer) && answer >= 0 && answer < question.choices.length) answers[question.id] = answer;
         }
-        exams[item.id] = { answers, position: typeof attempt.position === "number" ? Math.max(0, Math.min(Math.trunc(attempt.position), item.questions.length - 1)) : 0, submitted: attempt.submitted === true };
+        const submitted = attempt.submitted === true && item.questions.length > 0 && item.questions.every((question) => answers[question.id] !== undefined);
+        const remainingSeconds = typeof attempt.remainingSeconds === "number" && Number.isInteger(attempt.remainingSeconds) && attempt.remainingSeconds >= 0 && attempt.remainingSeconds <= examDurationSeconds(item.duration) ? attempt.remainingSeconds : undefined;
+        exams[item.id] = {
+          answers,
+          position: typeof attempt.position === "number" && Number.isFinite(attempt.position) ? Math.max(0, Math.min(Math.trunc(attempt.position), item.questions.length - 1)) : 0,
+          submitted,
+          ...(remainingSeconds !== undefined ? { remainingSeconds } : {}),
+        };
       }
     }
     const comments: CourseComment[] = Array.isArray(parsed.comments) ? parsed.comments.filter((comment): comment is CourseComment => isRecord(comment) && typeof comment.id === "string" && typeof comment.name === "string" && typeof comment.date === "string" && typeof comment.text === "string" && comment.text.trim().length > 0).slice(-100).map((comment) => ({ id: comment.id.slice(0, 100), name: comment.name.slice(0, 80), date: comment.date, text: comment.text.slice(0, 2000) })) : [];
